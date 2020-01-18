@@ -44,16 +44,38 @@ def get_shop_list_by_dishes(dishes, person_count):
 def print_shop_list_by_dishes(ingredients):
     [print(key, ': ', ingredients[key]) for key in ingredients]
 
-def main():
-    print('Задача 1')
-    print_cook_book(get_cook_book('cookbook.txt'))
+import contextlib
+from datetime import datetime
+import sys
+@contextlib.contextmanager
+def log_open(path, method):
+    try:
+        file = open(path, method)        
+        now = datetime.now()
+        file.write(f'Запуск кода {str(now)}\n')
+        yield file
+    finally:
+        now = datetime.now()
+        exc_ex, exc_info, ex_tb = sys.exc_info()
+        if ex_tb:
+            file.write(f'  При исполнении кода возникла ошибка {ex_tb.tb_frame}: {exc_info}\n')
+        file.write(f'Исполнение кода завершено {str(now)}\n\n')
+        file.close()
 
-    user_list = ['Запеченный картофель', 'Омлет']
-    print(f"\nЗадача 2.1\nСоставляем список покупок для {user_list}")
-    print_shop_list_by_dishes(get_shop_list_by_dishes(user_list, 2))
+if __name__ == '__main__':
+    
+    with log_open('log.txt', 'a') as log_file:
 
-    user_list = ['Фахитос', 'Омлет']
-    print(f"\nЗадача 2.2 c пересечением ингридиентов\nСоставляем список покупок для {user_list}")
-    print_shop_list_by_dishes(get_shop_list_by_dishes(user_list, 2))
+        print('Задача 1')
+        print_cook_book(get_cook_book('cookbook.txt'))
 
-main()
+        user_list = ['Запеченный картофель', 'Омлет']
+        print(f"\nЗадача 2.1\nСоставляем список покупок для {user_list}")
+        print_shop_list_by_dishes(get_shop_list_by_dishes(user_list, 2))
+
+        user_list = ['Фахитос', 'Омлет']
+        print(f"\nЗадача 2.2 c пересечением ингридиентов\nСоставляем список покупок для {user_list}")
+        print_shop_list_by_dishes(get_shop_list_by_dishes(user_list, 2))
+        1/0
+    
+
